@@ -15,10 +15,21 @@
   justify-content: center;
 }
 
+#searchInput {
+  border: 1px solid lightgray;
+  border-radius: 0.7rem;
+  padding: 7px;
+  background-color: white;
+}
+
+#searchInput::placeholder {
+  color: #999;
+}
+
 .btn {
   padding: 10px 40px;
   /* background-color: #fff; */
-  border: 0;
+  border: none;
   outline: none;
   cursor: pointer;
   font-size: 20px;
@@ -26,16 +37,44 @@
   border-radius: 30px;
 }
 
+.btn0 {
+  background-color: rgb(37, 37, 227);
+}
+
+.btn-submit {
+  background-color: rgb(196, 243, 196);
+  margin-top: 10px;
+}
+
+.btn-submit:hover {
+  background-color: rgb(171, 238, 171);
+}
+
+.btn1 {
+  background-color: red;
+}
+
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  color: white;
 }
 
 .sidebar {
+  /* background-color: white; */
   width: 100%;
   display: flex;
   padding: 30px;
+}
+
+.box {
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  background-color: white;
+  border: 1px solid lightgray;
+  border-radius: 1rem;
 }
 
 .sidebar .left-part {
@@ -59,7 +98,7 @@
 }
 
 .sidebar .right-part button {
-  margin: 0px 80px;
+  margin: 0px 50px;
 }
 
 .sidebar .right-part {
@@ -71,11 +110,26 @@
 }
 
 .product-list {
-  margin-top: 20px;
+  display: flex;
+  width: 100%;
+  color: rgb(37, 37, 227);
+  margin-top: 10px;
 }
 
 .productTable {
   width: 100%;
+  display: flex;
+  padding: 30px;
+}
+
+.productTable-box {
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border: 1px solid lightgray;
+  border-radius: 1rem;
 }
 
 .productTable table {
@@ -84,7 +138,8 @@
 }
 
 .productTable table tr th {
-  background-color: #3c5077;
+  background-color: white;
+  color: rgb(37, 37, 227);
   border: 1px solid #ccc;
   border-top: none;
   border-left: none;
@@ -97,7 +152,6 @@
 
 th,
 td {
-  /* border: 1px solid #ddd; */
   padding: 8px;
 }
 
@@ -119,16 +173,21 @@ tr:hover {
 
 .modal {
   visibility: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 0.7rem;
   left: 50%;
   top: 0;
   transform: translate(-50%, -50%) scale(0.1);
   position: absolute;
   width: 30%;
-  height: 45%;
-  background-color: red;
+  height: 50%;
+  background-color: rgb(229, 243, 255);
   overflow: auto;
   text-align: center;
-  padding: 0 30px 30px;
+  padding: 30px 30px;
   color: #333;
   transition: transform 0.4s, top 0.4s;
 }
@@ -139,38 +198,48 @@ tr:hover {
   transform: translate(-50%, -50%) scale(1);
 }
 
-.modal-form {
-  align-items: center;
-  justify-content: center;
-}
-
 .modal-form input[type="submit"] {
   margin-top: 10px;
   width: 50%;
   padding: 10px;
   border: none;
   border-radius: 5px;
-  background-color: #007bff;
   color: white;
   cursor: pointer;
 }
 
-.modal-form input[type="text"] {
+.modal-form label {
+  display: inline-block;
+  width: 100px;
+}
+
+.modal-form input[type="text"],
+.modal-form input[type="file"] {
+  display: inline-block;
+  width: calc(100% - 110px);
   margin-top: 10px;
-  width: 50%;
   padding: 10px;
-  border: none;
-  border: solid 1px black;
-  color: black;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.modal-form input[type="file"] {
   cursor: pointer;
+  background-color: white;
 }
 
 .modal-content {
-  background-color: white;
-  margin: 15% auto;
+  display: flex;
+  flex-direction: row;
+  background-color: rgb(195, 247, 247);
   padding: 20px;
   border: 1px solid #888;
+  border-radius: 0.7rem;
   width: 100%;
+}
+
+.modal-content span {
+  margin-left: 1rem;
 }
 
 .close {
@@ -188,5 +257,41 @@ tr:hover {
 }
 
 #productTableBody tr {
-  display: table-row; /* Initially display all rows */
+  display: table-row;
+}
+
+.product-image {
+  max-width: 100%;
+  max-height: 65px;
+  object-fit: contain;
+}
+
+.editBtn {
+  display: block;
+  margin: 0 auto;
+  padding: 5px 15px;
+  text-align: center;
+  background-color: lightgray;
+  border: none;
+}
+
+.editBtn:hover {
+  border: 2px solid rgba(211, 211, 211, 0.445);
+  transform: scale(1.2);
+}
+
+.deleteBtn {
+  display: block;
+  margin: 0 auto;
+  padding: 5px 15px;
+  text-align: center;
+  background-color: rgb(228, 43, 43);
+  color: white;
+  border: none;
+}
+
+.deleteBtn:hover {
+  background-color: white;
+  color: red;
+  transform: scale(1.2);
 }

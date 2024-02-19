@@ -5,7 +5,6 @@ let products = JSON.parse(localStorage.getItem("products")) || [];
 const productTableBody = document.querySelector("#productTableBody");
 
 // Function to handle search
-// Function to handle search
 document
   .querySelector(".btn-search")
   .addEventListener("click", function (event) {
@@ -47,7 +46,7 @@ function renderProducts() {
             <td>${product.name}</td>
             <td>${product.description}</td>
             <td>${product.price}</td>
-            <td><img src="${product.image}" alt="${product.name}" width="50"></td>
+            <td><img src="${product.image}" class="product-image" alt="${product.name}" width="50"></td>
             <td><button class="editBtn" data-id="${product.id}">Edit</button></td>
             <td><button class="deleteBtn" data-id="${product.id}">Delete</button></td>
           </tr>
@@ -62,20 +61,35 @@ addProductBtn.onclick = function addProduct(event) {
   const productName = document.getElementById("name").value;
   const productPrice = document.getElementById("price").value;
   const productDescription = document.getElementById("desc").value;
-  const newProduct = {
-    id: products.length + 1,
-    name: productName,
-    description: productDescription,
-    price: parseFloat(productPrice),
-    image: `product${products.length + 1}.jpg`,
-  };
+  const productImage = document.getElementById("image");
 
-  console.log("product", newProduct);
-  products.push(newProduct);
-  localStorage.setItem("products", JSON.stringify(products));
-  renderProducts();
-  modalForm.reset("");
-  closeBtn.click();
+  if (productImage.files.length > 0) {
+    const productImageFile = productImage.files[0];
+    const reader = new FileReader();
+
+    // Read the file as data URL
+    reader.readAsDataURL(productImageFile);
+
+    // When the file is loaded
+    reader.onload = function () {
+      const productImage = reader.result;
+
+      const newProduct = {
+        id: products.length + 1,
+        name: productName,
+        description: productDescription,
+        price: parseFloat(productPrice),
+        image: productImage,
+      };
+
+      console.log("product", newProduct);
+      products.push(newProduct);
+      localStorage.setItem("products", JSON.stringify(products));
+      renderProducts();
+      modalForm.reset("");
+      closeBtn.click();
+    };
+  }
 };
 
 let modal = document.getElementById("myModal");
@@ -84,6 +98,12 @@ function openPopUp() {
 }
 function closePopup() {
   modal.classList.remove("open-modal");
+}
+
+function deleteAll() {
+  localStorage.removeItem("products");
+  products = [];
+  renderProducts();
 }
 
 renderProducts();
@@ -125,6 +145,9 @@ productTableBody.addEventListener("click", function (event) {
             name: newName,
             description: newDescription,
             price: newPrice,
+            image:
+              document.getElementById("image").getAttribute("data-image") ||
+              product.image,
           };
 
           // Update localStorage with the modified product list
@@ -173,8 +196,6 @@ productTableBody.addEventListener("click", function (event) {
   }
 });
 
-// sorting algo.
-// Function to handle sorting
 // Function to handle sorting by ID
 document.getElementById("sortById").addEventListener("click", function (event) {
   const isAscending = this.classList.contains("asc"); // Check if currently in ascending order
@@ -253,37 +274,6 @@ document
 
     // Sort the products array based on the price using the comparator function
     products.sort(priceComparator);
-
-    // Re-render the products list with sorted products
-    renderProducts();
-  });
-
-// Function to handle sorting by description
-document
-  .getElementById("sortByDesc")
-  .addEventListener("click", function (event) {
-    const isAscending = this.classList.contains("asc"); // Check if currently in ascending order
-
-    // Toggle between ascending and descending order
-    if (isAscending) {
-      this.classList.remove("asc");
-      this.innerHTML = "&#x25BC;"; // Downward triangle for descending order
-    } else {
-      this.classList.add("asc");
-      this.innerHTML = "&#x25B2;"; // Upward triangle for ascending order
-    }
-
-    // Comparator function for sorting by description
-    const descComparator = (a, b) => {
-      const descA = a.description.toLowerCase();
-      const descB = b.description.toLowerCase();
-      return isAscending
-        ? descA.localeCompare(descB)
-        : descB.localeCompare(descA);
-    };
-
-    // Sort the products array based on the description using the comparator function
-    products.sort(descComparator);
 
     // Re-render the products list with sorted products
     renderProducts();
