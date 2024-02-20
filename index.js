@@ -138,29 +138,34 @@ productTableBody.addEventListener("click", function (event) {
         const newName = document.getElementById("name").value;
         const newDescription = document.getElementById("desc").value;
         const newPrice = parseFloat(document.getElementById("price").value);
+        const newImageFile = document.getElementById("image").files[0];
 
-        if (newName && newDescription && !isNaN(newPrice)) {
-          products[productIndex] = {
-            ...product,
-            name: newName,
-            description: newDescription,
-            price: newPrice,
-            image:
-              document.getElementById("image").getAttribute("data-image") ||
-              product.image,
+        if (newName && newDescription && !isNaN(newPrice) && newImageFile) {
+          const reader = new FileReader();
+          reader.readAsDataURL(newImageFile); // Read new image file as Data URL
+          reader.onload = function () {
+            const newImageURL = reader.result; // Get Data URL of new image
+
+            products[productIndex] = {
+              ...product,
+              name: newName,
+              description: newDescription,
+              price: newPrice,
+              image: newImageURL,
+            };
+
+            // Update localStorage with the modified product list
+            localStorage.setItem("products", JSON.stringify(products));
+
+            // Re-render the products list
+            renderProducts();
+
+            // Reset form fields
+            modalForm.reset("");
+
+            // Close the modal
+            closePopup();
           };
-
-          // Update localStorage with the modified product list
-          localStorage.setItem("products", JSON.stringify(products));
-
-          // Re-render the products list
-          renderProducts();
-
-          // Reset form fields
-          modalForm.reset("");
-
-          // Close the modal
-          closePopup();
         } else {
           alert("Please fill all fields with valid values.");
         }
