@@ -4,6 +4,21 @@ const modalForm = document.querySelector(".modal-form");
 let products = JSON.parse(localStorage.getItem("products")) || [];
 const productTableBody = document.querySelector("#productTableBody");
 
+let isEditMode = false;
+
+// Function to set the modal to edit mode
+function setEditMode() {
+  isEditMode = true;
+  document.getElementById("add-product").textContent = "Update";
+}
+
+// Function to set the modal to submit mode
+function setSubmitMode() {
+  isEditMode = false;
+  document.getElementById("add-product").textContent = "Submit";
+  console.log("submit mode");
+}
+
 // Function to handle search
 document
   .querySelector(".btn-search")
@@ -55,41 +70,79 @@ function renderProducts() {
   });
 }
 
-//Function to add a product
-addProductBtn.onclick = function addProduct(event) {
+function addProduct(event, product, productIndex) {
   event.preventDefault();
   const productName = document.getElementById("name").value;
   const productPrice = document.getElementById("price").value;
   const productDescription = document.getElementById("desc").value;
   const productImage = document.getElementById("image");
 
-  if (productImage.files.length > 0) {
-    const productImageFile = productImage.files[0];
-    const reader = new FileReader();
+  if (!isEditMode) {
+    if (productImage.files.length > 0) {
+      const productImageFile = productImage.files[0];
+      const reader = new FileReader();
 
-    // Read the file as data URL
-    reader.readAsDataURL(productImageFile);
+      // Read the file as data URL
+      reader.readAsDataURL(productImageFile);
 
-    // When the file is loaded
-    reader.onload = function () {
-      const productImage = reader.result;
+      // When the file is loaded
+      reader.onload = function () {
+        const productImage = reader.result;
 
-      const newProduct = {
-        id: products.length + 1,
-        name: productName,
-        description: productDescription,
-        price: parseFloat(productPrice),
-        image: productImage,
+        const newProduct = {
+          id: products.length + 1,
+          name: productName,
+          description: productDescription,
+          price: parseFloat(productPrice),
+          image: productImage,
+        };
+
+        console.log("product", newProduct);
+        products.push(newProduct);
+        localStorage.setItem("products", JSON.stringify(products));
+        renderProducts();
+        modalForm.reset("");
+        closeBtn.click();
       };
+    }
+  } else if (isEditMode) {
+    event.preventDefault();
+    const newName = document.getElementById("name").value;
+    const newDescription = document.getElementById("desc").value;
+    const newPrice = parseFloat(document.getElementById("price").value);
+    const newImageFile = document.getElementById("image").files[0];
 
-      console.log("product", newProduct);
-      products.push(newProduct);
-      localStorage.setItem("products", JSON.stringify(products));
-      renderProducts();
-      modalForm.reset("");
-      closeBtn.click();
-    };
+    if (newName && newDescription && !isNaN(newPrice) && newImageFile) {
+      const reader = new FileReader();
+      reader.readAsDataURL(newImageFile); // Read new image file as Data URL
+      reader.onload = function () {
+        const newImageURL = reader.result; // Get Data URL of new image
+
+        products[productIndex] = {
+          ...product,
+          name: newName,
+          description: newDescription,
+          price: newPrice,
+          image: newImageURL,
+        };
+
+        // Update localStorage with the modified product list
+        localStorage.setItem("products", JSON.stringify(products));
+
+        renderProducts();
+        closePopup();
+        setSubmitMode();
+      };
+    } else {
+      alert("Please fill all fields with valid values.");
+    }
   }
+}
+
+//Function to add a product
+addProductBtn.onclick = function (event) {
+  setSubmitMode();
+  addProduct(event);
 };
 
 let modal = document.getElementById("myModal");
@@ -98,6 +151,8 @@ function openPopUp() {
 }
 function closePopup() {
   modal.classList.remove("open-modal");
+  modalForm.reset("");
+  setSubmitMode();
 }
 
 function deleteAll() {
@@ -127,48 +182,14 @@ productTableBody.addEventListener("click", function (event) {
       document.getElementById("price").value = product.price;
 
       // Change submit button text to Update
-      document.getElementById("add-product").textContent = "Update";
+      setEditMode();
 
       // Display the modal
       openPopUp();
 
       // Handle form submission for updating the product
       document.getElementById("add-product").onclick = function (event) {
-        event.preventDefault();
-        const newName = document.getElementById("name").value;
-        const newDescription = document.getElementById("desc").value;
-        const newPrice = parseFloat(document.getElementById("price").value);
-        const newImageFile = document.getElementById("image").files[0];
-
-        if (newName && newDescription && !isNaN(newPrice) && newImageFile) {
-          const reader = new FileReader();
-          reader.readAsDataURL(newImageFile); // Read new image file as Data URL
-          reader.onload = function () {
-            const newImageURL = reader.result; // Get Data URL of new image
-
-            products[productIndex] = {
-              ...product,
-              name: newName,
-              description: newDescription,
-              price: newPrice,
-              image: newImageURL,
-            };
-
-            // Update localStorage with the modified product list
-            localStorage.setItem("products", JSON.stringify(products));
-
-            // Re-render the products list
-            renderProducts();
-
-            // Reset form fields
-            modalForm.reset("");
-
-            // Close the modal
-            closePopup();
-          };
-        } else {
-          alert("Please fill all fields with valid values.");
-        }
+        addProduct(event, product, productIndex); // Pass productIndex
       };
     } else {
       alert("Product not found.");
