@@ -77,6 +77,18 @@ function addProduct(event, product, productIndex) {
   const productDescription = document.getElementById("desc").value;
   const productImage = document.getElementById("image");
 
+  console.log(productImage);
+
+  if (
+    productName === "" ||
+    productPrice === "" ||
+    productDescription === "" ||
+    productImage.files.length == 0
+  ) {
+    alert("Please fill in all fields");
+    return;
+  }
+
   if (!isEditMode) {
     if (productImage.files.length > 0) {
       const productImageFile = productImage.files[0];
@@ -111,6 +123,13 @@ function addProduct(event, product, productIndex) {
     const newDescription = document.getElementById("desc").value;
     const newPrice = parseFloat(document.getElementById("price").value);
     const newImageFile = document.getElementById("image").files[0];
+
+    console.log(newImageFile);
+
+    if (newName === "" || newDescription === "" || newPrice === "") {
+      alert("Please fill in all fields");
+      return;
+    }
 
     if (newName && newDescription && !isNaN(newPrice) && newImageFile) {
       const reader = new FileReader();
@@ -180,6 +199,36 @@ productTableBody.addEventListener("click", function (event) {
       document.getElementById("name").value = product.name;
       document.getElementById("desc").value = product.description;
       document.getElementById("price").value = product.price;
+
+      // Convert base64 image data to Blob
+      const blob = base64ToBlob(product.image);
+      const file = new File([blob], "product_image.png", { type: "image/png" });
+
+      // Set the image file as the value of the file input
+      document.getElementById("image").files[0] = file;
+
+      // Function to convert base64 string to Blob
+      function base64ToBlob(base64String) {
+        // Extract base64 data
+        var base64Data = base64String.split(",")[1];
+
+        // Decode base64
+        var decodedData = atob(base64Data);
+
+        // Create an array buffer from the decoded base64 data
+        var arrayBuffer = new ArrayBuffer(decodedData.length);
+        var uint8Array = new Uint8Array(arrayBuffer);
+        for (var i = 0; i < decodedData.length; i++) {
+          uint8Array[i] = decodedData.charCodeAt(i);
+        }
+
+        // Create a Blob from the array buffer
+        var mimeString = base64String.split(",")[0].split(":")[1].split(";")[0];
+        return new Blob([uint8Array], { type: mimeString });
+      }
+
+      // document.getElementById("image").value = product.image;
+      console.log(product);
 
       // Change submit button text to Update
       setEditMode();
