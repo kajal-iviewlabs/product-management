@@ -35,9 +35,11 @@
               <input type="text" id="price" name="price" /></br>
               <label for="image">Image:</label>
               <input type="file" id="image" name="image" accept="image/*" /><br /> 
-              <button class="btn btn-submit" id="add-product" onclick="addProduct()">Submit</button>
+              <div class="btn-grp">
+                <button class="btn btn-submit" id="add-product" onclick="addProduct()">Submit</button>
+                <button class="btn close" onclick="closePopup()">cancel</button>
+              </div>
             </form>
-            <span class="close" onclick="closePopup()">&times;</span>
           </div>
         </div>
       </div>
